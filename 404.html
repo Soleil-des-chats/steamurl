@@ -4,7 +4,7 @@
   <title>Steam URI Redirect</title>
   <script>
     // Get path after https://linkoid.gitub.io/steamuri/
-    var targetPath = window.location.path.substr("steamuri/".length);
+    var targetPath = window.location.pathname.substr("steamuri/".length);
     // Perform the redirection to the specified 
     window.location.href = "steam://" + targetPath;
   </script>
