@@ -5,8 +5,10 @@
   <script>
     // Get path after https://linkoid.gitub.io/steamuri/
     var targetPath = window.location.pathname.substr("steamuri/".length);
+    var redirectUri = "steam://" + targetPath;
+    console.log("Redirecting to " + redirectUri)
     // Perform the redirection to the specified 
-    window.location.href = "steam://" + targetPath;
+    window.location.href = redirectUri
   </script>
 </head>
 <body>
