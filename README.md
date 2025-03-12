@@ -1,2 +1,2 @@
 # UrlRedirector
-A quick website used to redirect URLs quickly.
+A website used to redirect steam URIs quickly.
