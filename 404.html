@@ -51,7 +51,6 @@
       z-index: 1000;
     }
     
-    /* Steam-style background pattern */
     body::after {
       content: '';
       position: fixed;
@@ -225,19 +224,15 @@
   </style>
 
   <script>
-    // Original redirect functionality
     var targetPath = window.location.pathname.substr("/steamurl/".length);
     var redirectUri = "steam://" + targetPath;
     console.log("Redirecting to " + redirectUri);
     
-    // Delay redirect to show the loading animation
     setTimeout(function() {
       window.location.href = redirectUri;
-    }, 3500);
+    }, 500);
     
-    // Add some interactive effects
     document.addEventListener('DOMContentLoaded', function() {
-      // Add CRT flicker effect randomly
       setInterval(function() {
         if (Math.random() < 0.1) {
           document.body.classList.add('crt-flicker');
@@ -251,7 +246,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="steam-logo">S</div>
+    <div class="steam-logo"></div>
     <h1 class="game-title">R.E.P.O</h1>
     <p class="subtitle">Launching through Steam</p>
     
@@ -263,8 +258,6 @@
     </div>
     
     <p class="status-text">
-      > steam://connect/established<br>
-      > game_launch_sequence_active<br>
       > redirecting_to_client...
     </p>
   </div>
