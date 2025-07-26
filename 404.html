@@ -1,22 +1,272 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Steam URI Redirect</title>
+  <title>R.E.P.O - Steam URI Redirect</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://linkoid.github.io/steamuri/">
-  <meta property="og:title" content="Steam URI Redirect">
-  <meta property="og:description" content="Quickly redirect to Steam URIs">
+  <meta property="og:url" content="https://soleil-des-chats.github.io/steamurl/">
+  <meta property="og:title" content="R.E.P.O - Steam URI Redirect">
+  <meta property="og:description" content="Launching R.E.P.O. through Steam">
   <meta property="og:image" content="https://community.cloudflare.steamstatic.com/public/shared/images/responsive/steam_share_image.jpg">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Orbitron', monospace;
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 50%, #0a0a0a 100%);
+      color: #ff8c00;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* CRT Screen Effect */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255, 140, 0, 0.03) 2px,
+        rgba(255, 140, 0, 0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 1000;
+    }
+    
+    /* Steam-style background pattern */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(circle at 25% 25%, rgba(255, 140, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 140, 0, 0.05) 0%, transparent 50%);
+      animation: backgroundPulse 4s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    
+    .container {
+      text-align: center;
+      z-index: 100;
+      position: relative;
+      max-width: 600px;
+      padding: 40px;
+      background: rgba(20, 20, 20, 0.8);
+      border: 2px solid #ff8c00;
+      border-radius: 12px;
+      box-shadow: 
+        0 0 30px rgba(255, 140, 0, 0.3),
+        inset 0 0 20px rgba(255, 140, 0, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    .steam-logo {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 20px;
+      background-image: url('https://community.cloudflare.steamstatic.com/public/shared/images/responsive/steam_share_image.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(255, 140, 0, 0.5);
+      animation: steamPulse 2s ease-in-out infinite;
+    }
+    
+    .game-title {
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 10px;
+      text-shadow: 
+        0 0 10px #ff8c00,
+        0 0 20px #ff8c00,
+        0 0 30px #ff8c00;
+      letter-spacing: 3px;
+      animation: titleGlow 3s ease-in-out infinite alternate;
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #cccccc;
+      font-weight: 400;
+      opacity: 0.8;
+    }
+    
+    .loading-container {
+      margin: 30px 0;
+    }
+    
+    .loading-text {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+      color: #ff8c00;
+      animation: loadingBlink 1.5s ease-in-out infinite;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 140, 0, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 1px solid #ff8c00;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff8c00, #ffa500, #ff8c00);
+      width: 0%;
+      border-radius: 4px;
+      animation: progressLoad 3s ease-out forwards;
+      box-shadow: 0 0 10px rgba(255, 140, 0, 0.8);
+    }
+    
+    .status-text {
+      font-size: 0.9rem;
+      color: #999;
+      font-family: 'Courier New', monospace;
+      margin-top: 20px;
+      opacity: 0;
+      animation: fadeIn 2s ease-in forwards 1s;
+    }
+    
+    .crt-flicker {
+      animation: crtFlicker 0.15s linear infinite;
+    }
+    
+    /* Animations */
+    @keyframes titleGlow {
+      0% { text-shadow: 0 0 10px #ff8c00, 0 0 20px #ff8c00, 0 0 30px #ff8c00; }
+      100% { text-shadow: 0 0 15px #ff8c00, 0 0 25px #ff8c00, 0 0 35px #ff8c00, 0 0 45px #ff8c00; }
+    }
+
+    @keyframes steamPulse {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.5);
+        }
+        50% {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.8);
+        }
+    }
+    
+    @keyframes loadingBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    @keyframes progressLoad {
+      0% { width: 0%; }
+      30% { width: 45%; }
+      60% { width: 78%; }
+      100% { width: 100%; }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes backgroundPulse {
+      0% { opacity: 0.3; }
+      100% { opacity: 0.6; }
+    }
+    
+    @keyframes crtFlicker {
+      0% { opacity: 1; }
+      98% { opacity: 1; }
+      99% { opacity: 0.98; }
+      100% { opacity: 1; }
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .container {
+        margin: 20px;
+        padding: 30px 20px;
+      }
+      
+      .game-title {
+        font-size: 2rem;
+        letter-spacing: 2px;
+      }
+      
+      .subtitle {
+        font-size: 1rem;
+      }
+    }
+  </style>
+
   <script>
-    // Get path after https://linkoid.gitub.io/steamuri/
-    var targetPath = window.location.pathname.substr("/steamuri/".length);
+    // Original redirect functionality
+    var targetPath = window.location.pathname.substr("/steamurl/".length);
     var redirectUri = "steam://" + targetPath;
-    console.log("Redirecting to " + redirectUri)
-    // Perform the redirection to the specified 
-    window.location.href = redirectUri
+    console.log("Redirecting to " + redirectUri);
+    
+    // Delay redirect to show the loading animation
+    setTimeout(function() {
+      window.location.href = redirectUri;
+    }, 3500);
+    
+    // Add some interactive effects
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add CRT flicker effect randomly
+      setInterval(function() {
+        if (Math.random() < 0.1) {
+          document.body.classList.add('crt-flicker');
+          setTimeout(function() {
+            document.body.classList.remove('crt-flicker');
+          }, 150);
+        }
+      }, 2000);
+    });
   </script>
 </head>
 <body>
-  This link has been opened with Steam.
+  <div class="container">
+    <div class="steam-logo">S</div>
+    <h1 class="game-title">R.E.P.O</h1>
+    <p class="subtitle">Launching through Steam</p>
+    
+    <div class="loading-container">
+      <p class="loading-text">▶ INITIALIZING GAME SESSION...</p>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+    
+    <p class="status-text">
+      > steam://connect/established<br>
+      > game_launch_sequence_active<br>
+      > redirecting_to_client...
+    </p>
+  </div>
 </body>
 </html>
